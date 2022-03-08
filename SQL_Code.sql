@@ -1,0 +1,152 @@
+DROP DATABASE IF EXISTS gim;
+
+CREATE DATABASE IF NOT EXISTS gim;
+
+USE gim;
+
+CREATE TABLE MONITORS(
+DNI_MONITOR VARCHAR(9) NOT NULL,
+NOM_MONITOR VARCHAR(20) NOT NULL,
+COGNOM_MONITOR VARCHAR(50) NOT NULL,
+NUM_TEL INT(9),
+EMAIL_MONITOR VARCHAR(50),
+SOU FLOAT(8,2),
+PRIMARY KEY (DNI_MONITOR)
+);
+
+CREATE TABLE SALES(
+NUM_SALA INT(8) NOT NULL,
+DNI_MONITOR VARCHAR(9) NOT NULL,
+AFORAMENT INT(8) NOT NULL,
+PRIMARY KEY (NUM_SALA),
+FOREIGN KEY (DNI_MONITOR) REFERENCES MONITORS(DNI_MONITOR)
+);
+
+CREATE TABLE ACTIVITATS(
+NUM_ACTIVITAT INT (4) NOT NULL,
+NUM_SALA INT(8) NOT NULL,
+NOM_ACT VARCHAR (20) NOT NULL,
+DESCRIPCIO VARCHAR (200),
+DURADA INT (3),
+DIA DATE NOT NULL,
+HORA_INICI DATETIME NOT NULL,
+HORA_FI TIME,
+IMG VARCHAR(50),
+PRIMARY KEY (NUM_ACTIVITAT, DIA, HORA_INICI),
+FOREIGN KEY (NUM_SALA) REFERENCES SALES(NUM_SALA)
+);
+
+CREATE TABLE INDIVIDUALS(
+NUM_ACTIVITAT INT(4),
+PRIMARY KEY (NUM_ACTIVITAT),
+FOREIGN KEY (NUM_ACTIVITAT) REFERENCES ACTIVITATS(NUM_ACTIVITAT)
+);
+
+CREATE TABLE COLECTIUS(
+NUM_ACTIVITAT INT(4),
+PRIMARY KEY (NUM_ACTIVITAT),
+FOREIGN KEY (NUM_ACTIVITAT) REFERENCES ACTIVITATS(NUM_ACTIVITAT)
+);
+
+CREATE TABLE CLIENTS(
+DNI VARCHAR(9) NOT NULL,
+NOM VARCHAR(20) NOT NULL,
+COGNOM VARCHAR(50) NOT NULL,
+SEXE VARCHAR(6),
+DATA_NAIX DATE,
+TEL INT (9),
+EMAIL VARCHAR(50),
+USUARI VARCHAR (20) NOT NULL,
+PASS VARCHAR (100) NOT NULL,
+PUBLICITAT BOOLEAN,
+IBAN VARCHAR (24),
+IMPEDIMENT_FISIC BOOLEAN,
+PRIMARY KEY (DNI)
+);
+
+CREATE TABLE INSCRIUEN(
+DNI VARCHAR(9) NOT NULL,
+NUM_ACTIVITAT INT (4) NOT NULL,
+HORA_INICI DATETIME,
+HORA_FI TIME,
+DATA_ACT DATE,
+PRIMARY KEY (DNI, NUM_ACTIVITAT, HORA_INICI),
+FOREIGN KEY (NUM_ACTIVITAT) REFERENCES ACTIVITATS(NUM_ACTIVITAT),
+FOREIGN KEY (DNI) REFERENCES CLIENTS(DNI)
+);
+
+CREATE TABLE REGISTRE(
+CODI_CLIENT INT,
+PRIMARY KEY (CODI_CLIENT)
+);
+
+CREATE TABLE ESGUARDEN(
+DNI VARCHAR(9) NOT NULL,
+CODI_CLIENT INT,
+DATA_ALTA DATE,
+DATA_BAIXA DATE,
+PRIMARY KEY (DNI, CODI_CLIENT),
+FOREIGN KEY (DNI) REFERENCES CLIENTS(DNI),
+FOREIGN KEY (CODI_CLIENT) REFERENCES REGISTRE(CODI_CLIENT)
+);
+
+INSERT INTO MONITORS (DNI_MONITOR, NOM_MONITOR, COGNOM_MONITOR, NUM_TEL, EMAIL_MONITOR, SOU) VALUES
+('68602497Y','Elsa','Capuntas','684837232','elsa@gmail.com','15000'),
+('25356364Z','Rosa','Prados','645353624','rosa@gmail.com','16000'),
+('77060818P','José','Prados','623323246','jose@gmail.com','13000'),
+('75929514M','Alex','Padilla','68788790','alex@gmail.com','14000'),
+('32876056V','María','Sánchez','698643733','maria@gmail.com','15000'),
+('68610439J','Teresa','Austed','623311121','teresa@gmail.com','15000');
+
+INSERT INTO SALES (NUM_SALA, DNI_MONITOR, AFORAMENT) VALUES
+('1','68602497Y','100'),
+('2','25356364Z','120'),
+('3','77060818P','140'),
+('4','75929514M','100'),
+('5','32876056V','250'),
+('6','68610439J','270');
+
+INSERT INTO ACTIVITATS (NUM_ACTIVITAT, NUM_SALA, NOM_ACT, DESCRIPCIO, DURADA, DIA, HORA_INICI, HORA_FI, IMG) VALUES
+('1', '1', 'Body_pump', 'Body Pump es un programa de entrenamiento físico intenso.', '60', '2022-03-09', '2022-03-09 13:00:00', '14:00:00', 'body_pump.jpg'),
+ ('2', '2', 'Pilates', 'Pilateclientss es bueno para fortalecer toda la musculatura del cuerpo.', '120', '2022-03-09', '2022-03-09 11:00:00', '13:00:00', 'pilates.jpg'),
+ ('3', '3', 'Yoga', 'El yoga es una práctica que conecta el cuerpo, la respiración y la mente.', '120', '2022-03-09', '2022-03-09 12:00:00', '14:00:00', 'yoga.jpg'),
+ ('4', '4', 'Natació_lliure', 'Estilo libre es nadar con la palma hacia abajo dispuesta a ingresar al agua, y el codo relajado, mientras el otro brazo avanza bajo el agua.', '180', '2022-03-09', '2022-03-09 10:00:00', '13:00:00', 'piscina.jpg'),
+ ('5', '5', 'Fitness', 'Se denomina fitness a la práctica deportiva consistente en realizar ejercicio para ponerse o mantenerse en buena forma.', '60', '2022-03-09', '2022-03-09 10:00:00', '11:00:00', 'gimnas.jpg'),
+('6', '6', 'Cycling', 'Se utiliza una bicicleta similar a la popularmente conocida como "bici estática".', '90', '2022-03-09', '2022-03-09 11:00:00', '12:30:00', 'cycling.jpg');
+
+INSERT INTO INDIVIDUALS (NUM_ACTIVITAT) VALUES
+('4'), ('5');
+
+INSERT INTO COLECTIUS (NUM_ACTIVITAT) VALUES
+('1'), ('2'), ('3'), ('6');
+
+INSERT INTO CLIENTS (DNI, NOM, COGNOM, SEXE, DATA_NAIX, TEL, EMAIL, USUARI, PASS, PUBLICITAT, IBAN, IMPEDIMENT_FISIC) VALUES
+('84140066V', 'Alex', 'Rubtsov', 'Home', '1996-03-02', '666383888', 'alex@gmail.com', 'alex', MD5('Costafreda1'), '1', 'ES6520169982023431749537', '0'),
+('57366503H', 'Oleg', 'Blyznyuk', 'Home', '2001-06-24', '666383884', 'oleg@gmail.com', 'oleg', MD5('Fat/3232'), '1', 'ES0731371581861963447270', '0'),
+('53590878G', 'Elsa', 'Pato', 'Dona', '1999-10-12', '666383881', 'elsa@gmail.com', 'elsa', MD5('Costafreda1'), '0', 'ES4920893965120552513262', '0'),
+('03251043Q', 'David', 'Gobern', 'Home', '1995-07-22', '666383882', 'david@gmail.com', 'david', MD5('Costafreda1'), '0', 'ES2631607712151639875187', '0'),
+('58793063A', 'Paco', 'Pekin', 'Home', '1972-12-12', '666383883', 'paco@gmail.com', 'paco', MD5('Costafreda1'), '0', 'ES1714675091638082406693', '1'),
+('86466452E', 'Eddy', 'Ficio', 'Home', '2003-11-16', '666383886', 'eddy@gmail.com', 'eddy', MD5('Costafreda1'), '1', 'ES0421087417144033915315', '0');
+
+INSERT INTO REGISTRE (CODI_CLIENT) VALUES
+('1'), ('2'), ('3'), ('4'), ('5'), ('6');
+
+INSERT INTO ESGUARDEN (DNI, CODI_CLIENT, DATA_ALTA, DATA_BAIXA) VALUES
+('84140066V', '1', '2021-11-24', ''),
+('57366503H', '2', '2021-12-02', ''),
+('53590878G', '3', '2022-01-03', ''),
+('03251043Q', '4', '2022-01-03', '2022-02-03'),
+('58793063A', '5', '2022-01-15', '2022-03-01'),
+('86466452E', '6', '2022-01-26', '');
+
+/*	Consultes que hem utilitzat en la web i aplicacio java	*/
+
+/*	WEB	*/
+
+#SELECT * FROM CLIENTS WHERE USUARI='$user' AND PASS='$pass'; /*  En lloc de user 'oleg', en lloc de pass MD5('Fat/3232') */
+#SELECT * FROM ACTIVITATS A, MONITORS M, SALES S WHERE S.DNI_MONITOR=M.DNI_MONITOR AND S.NUM_SALA=A.NUM_SALA AND (NOW() + INTERVAL 1 HOUR)<HORA_INICI AND (NOW() + INTERVAL 24 HOUR)>HORA_INICI  GROUP BY NOM_ACT ORDER BY HORA_INICI, DURADA;
+#INSERT INTO inscriuen (DNI, NUM_ACTIVITAT, HORA_INICI, HORA_FI, DATA_ACT) VALUES ('$_SESSION[DNI]','$row[NUM_ACTIVITAT]','$row[HORA_INICI]','$row[HORA_FI]','$row[DIA]'); /*  session dni - 57366503H, row[NUM_ACTIVITAT] - 5, row[hora inini] (es DATATIME) - 2022-03-'dia d'avui o dema' 00:00:00 - has de posar la hora d'aqui 1h o mes fins 24h, row[HORA_FI] (ES TIME) - qualsevol hora, row[DIA] - el dia d'avui o dema */
+#SELECT * FROM INSCRIUEN WHERE DNI= '$_SESSION[DNI]'; /*  EN lloc d'aquest session dni pots posar un DNI per exemple 57366503H */
+#DELETE FROM `inscriuen` WHERE NUM_ACTIVITAT=$activitat; /*  en lloc de activitat - 'Fitness' */
+
+/*	Aplicacion java	*/
